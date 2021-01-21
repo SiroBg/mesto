@@ -1,0 +1,10 @@
+.place {
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  align-items: center;
+  padding-bottom: 31px;
+  color: #000;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}

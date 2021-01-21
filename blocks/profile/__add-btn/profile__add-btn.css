@@ -1,0 +1,31 @@
+.profile__add-btn {
+  width: 150px;
+  height: 50px;
+  position: relative;
+  border: 2px solid #fff;
+  background-color: transparent;
+}
+
+.profile__add-btn::before {
+  content: "";
+  display: block;
+  width: 2px;
+  height: 22px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+}
+
+.profile__add-btn::after {
+  content: "";
+  display: block;
+  width: 22px;
+  height: 2px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+}

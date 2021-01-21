@@ -1,0 +1,12 @@
+.popup__btn {
+  position: relative;
+  width: 100%;
+  min-height: 50px;
+  margin-top: 18px;
+  padding: 0;
+  color: #fff;
+  background-color: #000;
+  border: none;
+  border-radius: 2px;
+  outline: none;
+}
