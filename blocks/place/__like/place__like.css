@@ -11,6 +11,7 @@
   border: none;
   border-radius: 20%;
   outline: none;
+  transition: opacity 0.1s ease-in;
 }
 
 .place__like:hover {

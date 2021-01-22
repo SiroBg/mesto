@@ -4,7 +4,13 @@
   padding-bottom: 67px;
 }
 
-@media all and (max-width: 320px) {
+@media all and (max-width: 920px) {
+  .content {
+    padding: 36.25px 19px 67px;
+  }
+}
+
+@media all and (max-width: 425px) {
   .content {
     padding-top: 38.25px;
     padding-bottom: 48px;

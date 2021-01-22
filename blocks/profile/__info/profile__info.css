@@ -1,5 +1,15 @@
 .profile__info {
-  position: relative;
+  display: grid;
+  gap: 16px 18px;
+  grid-template-columns: 1fr min-content;
   margin: 0 auto 0 30px;
-  padding-right: 42px;
+  padding-right: 15px;
+}
+
+@media all and (max-width: 920px) {
+  .profile__info {
+    gap: 14px 10px;
+    margin: 22.25px auto 36px;
+    padding: 0 0 0 28px;
+  }
 }

@@ -1,0 +1,13 @@
+.footer {
+  max-width: 880px;
+  padding-bottom: 60px;
+  font-size: 18px;
+  color: #545454;
+}
+
+@media all and (max-width: 920px) {
+  .footer {
+    padding: 0 19px 36px;
+    font-size: 14px;
+  }
+}
