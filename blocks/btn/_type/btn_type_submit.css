@@ -1,8 +1,6 @@
-.popup__btn {
-  position: relative;
+.btn_type_submit {
   width: 100%;
   min-height: 50px;
-  margin-top: 18px;
   padding: 0;
   font-size: 18px;
   color: #fff;
@@ -13,21 +11,21 @@
   transition: background-color 0.1s ease-in;
 }
 
-.popup__btn:hover {
+.btn_type_submit:hover {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
-.popup__btn:active {
+.btn_type_submit:active {
   background-color: rgba(0, 0, 0, 0.9);
 }
 
-.popup__btn:focus {
+.btn_type_submit:focus {
   box-shadow:
     0 0 15px 5px rgba(0, 0, 0, 0.5);
 }
 
 @media all and (max-width: 635px) {
-  .popup__btn {
+  .btn_type_submit {
     min-height: 46px;
     margin-top: 15px;
     font-size: 14px;
