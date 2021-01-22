@@ -2,8 +2,14 @@
   margin: 0;
   font-size: 42px;
   font-weight: 500;
-  word-break: break-word;
-  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+@media all and (max-width: 635px) {
+  .profile__name {
+    text-align: center;
+  }
 }
 
 @media all and (max-width: 425px) {
