@@ -1,0 +1,12 @@
+.full-place__close-btn {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  margin: 0;
+}
+
+@media all and (max-width: 635px) {
+  .full-place__close-btn {
+    right: 5px;
+  }
+}
