@@ -26,7 +26,6 @@ const initialCards = [
 ];
 const profileBtn = document.querySelector('.profile__edit-btn');
 const profilePopup = document.querySelector('#profile-popup');
-const profileCloseBtn = profilePopup.querySelector('.popup__close-btn');
 const formElement = profilePopup.querySelector('.popup__form');
 const nameInput = formElement.querySelector('.popup__form-field_type_name');
 const jobInput = formElement.querySelector('.popup__form-field_type_job');
@@ -34,7 +33,6 @@ const userName = document.querySelector('.profile__name');
 const userJob = document.querySelector('.profile__job');
 const placeAddBtn = document.querySelector('.profile__add-btn');
 const placePopup = document.querySelector('#place-popup');
-const placeCloseBtn = placePopup.querySelector('.popup__close-btn');
 const placeForm = placePopup.querySelector('.popup__form');
 const titleInput = placePopup.querySelector('.popup__form-field_type_title');
 const imageInput = placePopup.querySelector('.popup__form-field_type_image');
@@ -43,7 +41,6 @@ const placeTemplate = document.querySelector('#place-template').content;
 const fullPlace = document.querySelector('#zoom-popup');
 const fullImage = fullPlace.querySelector('.full-place__image');
 const fullName = fullPlace.querySelector('.full-place__name');
-const fullPlaceCloseBtn = fullPlace.querySelector('.full-place__close-btn');
 
 function openPopup(popup) {
   popup.classList.add('popup_opened');
@@ -110,17 +107,31 @@ function addInitialPlaces(placesArray) {
   placesArray.forEach(card => addCard(card.name, card.link));
 }
 
+function closePopupHandler (popup) {
+  popup.addEventListener('click', (evt) => {
+    if(evt.target.classList.contains('btn_type_close') || evt.target === evt.currentTarget) {
+      closePopup(popup);
+    }
+  });
+  window.addEventListener('keydown', (evt) => {
+    if(evt.key === 'Escape') {
+      closePopup(popup);
+    }
+  });
+}
+
+function enableClosePopupHandler () {
+  const popupList = Array.from(document.querySelectorAll('.popup'));
+  popupList.forEach(popup => closePopupHandler(popup));
+}
+
+enableClosePopupHandler();
+
 addInitialPlaces(initialCards);
 
 profileBtn.addEventListener('click', setDefaultPlaceholder);
 
 placeAddBtn.addEventListener('click', () => openPopup(placePopup));
-
-placeCloseBtn.addEventListener('click', () => closePopup(placePopup));
-
-profileCloseBtn.addEventListener('click', () => closePopup(profilePopup));
-
-fullPlaceCloseBtn.addEventListener('click', () => closePopup(fullPlace));
 
 formElement.addEventListener('submit', changeUserInfo);
 
