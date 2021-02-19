@@ -48,12 +48,33 @@ function openPopup(popup) {
 
 function closePopup(popup) {
   popup.classList.remove('popup_opened');
+  popup.removeEventListener('mousedown', closePopupHandle);
+  window.removeEventListener('keydown', closePopupOnEscape);
+}
+
+function closePopupOnEscape(evt) {
+  const openedPopup = document.querySelector('.popup_opened');
+  if(evt.key === 'Escape') {
+    closePopup(openedPopup);
+  }
+}
+
+function closePopupHandle(evt) {
+  if(evt.target.classList.contains('btn_type_close') || evt.target === evt.currentTarget) {
+    closePopup(evt.currentTarget);
+  }
+}
+
+function handlePopup(popup) {
+  openPopup(popup);
+  popup.addEventListener('mousedown', closePopupHandle);
+  window.addEventListener('keydown', closePopupOnEscape);
 }
 
 function setDefaultPlaceholder() {
   nameInput.value = userName.textContent;
   jobInput.value = userJob.textContent;
-  openPopup(profilePopup);
+  handlePopup(profilePopup);
 }
 
 function changeUserInfo(evt) {
@@ -88,7 +109,7 @@ function createPlace(title, link) {
 
   placeImage.addEventListener('click', function(){
     changePlace(fullName, fullImage, title, link);
-    openPopup(fullPlace);
+    handlePopup(fullPlace);
   });
   return placeCard;
 }
@@ -107,31 +128,25 @@ function addInitialPlaces(placesArray) {
   placesArray.forEach(card => addCard(card.name, card.link));
 }
 
-function closePopupHandler (popup) {
-  popup.addEventListener('click', (evt) => {
-    if(evt.target.classList.contains('btn_type_close') || evt.target === evt.currentTarget) {
-      closePopup(popup);
-    }
-  });
-  window.addEventListener('keydown', (evt) => {
-    if(evt.key === 'Escape') {
-      closePopup(popup);
-    }
-  });
+function setFocusForVisibilityPopup(field) {
+  setTimeout(function(){
+    field.focus();
+  }, 100);
 }
-
-function enableClosePopupHandler () {
-  const popupList = Array.from(document.querySelectorAll('.popup'));
-  popupList.forEach(popup => closePopupHandler(popup));
-}
-
-enableClosePopupHandler();
 
 addInitialPlaces(initialCards);
 
-profileBtn.addEventListener('click', setDefaultPlaceholder);
+profileBtn.addEventListener('click', () => {
+  setDefaultPlaceholder();
+  setFocusForVisibilityPopup(nameInput);
+});
 
-placeAddBtn.addEventListener('click', () => openPopup(placePopup));
+placeAddBtn.addEventListener('click', () => {
+  handlePopup(placePopup);
+  titleInput.value = '';
+  imageInput.value = '';
+  setFocusForVisibilityPopup(titleInput);
+});
 
 formElement.addEventListener('submit', changeUserInfo);
 
