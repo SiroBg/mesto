@@ -42,11 +42,23 @@ const fullPlace = document.querySelector('#zoom-popup');
 const fullImage = fullPlace.querySelector('.full-place__image');
 const fullName = fullPlace.querySelector('.full-place__name');
 
+function resetAllErrorFields(popup) {
+  const errorElements = Array.from(popup.querySelectorAll('.popup__form-error'));
+  const inputElements = Array.from(popup.querySelectorAll('.popup__form-field'));
+  inputElements.forEach(element => {
+    element.classList.remove('popup__form-field_type_error');
+  });
+  errorElements.forEach(element => {
+    element.classList.remove('popup__form-error_active');
+  });
+}
+
 function openPopup(popup) {
   popup.classList.add('popup_opened');
 }
 
 function closePopup(popup) {
+  resetAllErrorFields(popup);
   popup.classList.remove('popup_opened');
   popup.removeEventListener('mousedown', closePopupHandle);
   window.removeEventListener('keydown', closePopupOnEscape);
@@ -72,6 +84,10 @@ function handlePopup(popup) {
 }
 
 function setDefaultPlaceholder() {
+  const profileSafeButton = profilePopup.querySelector('.btn_type_submit');
+  if(profileSafeButton.classList.contains('btn_disabled')) {
+    profileSafeButton.classList.remove('btn_disabled');
+  }
   nameInput.value = userName.textContent;
   jobInput.value = userJob.textContent;
   handlePopup(profilePopup);

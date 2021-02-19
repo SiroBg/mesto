@@ -33,19 +33,31 @@
     </p>
   </footer>
   <article class="popup" id="profile-popup">
-    <form class="popup__form" method="post" name="form-popup">
+    <form class="popup__form" method="post" name="form-popup" novalidate>
       <h2 class="popup__title">Редактировать профиль</h2>
-      <input class="popup__form-field popup__form-field_type_name" type="text" name="name" placeholder="Ваше имя">
-      <input class="popup__form-field popup__form-field_type_job" type="text" name="job" placeholder="Вид деятельности">
+      <label class="popup__label">
+        <input class="popup__form-field popup__form-field_type_name" type="text" name="name" placeholder="Ваше имя" id="name-field" minlength="2" maxlength="40" required>
+        <span class="popup__form-error name-field-error"></span>
+      </label>
+      <label class="popup__label">
+        <input class="popup__form-field popup__form-field_type_job" type="text" name="job" placeholder="Вид деятельности" id="job-field" minlength="2" maxlength="200" required>
+        <span class="popup__form-error job-field-error"></span>
+      </label>
       <button class="btn btn_type_submit popup__btn" type="submit">Сохранить</button>
       <button class="btn btn_type_close popup__close-btn" type="button"></button>
     </form>
   </article>
   <article class="popup" id="place-popup">
-    <form class="popup__form" method="post" name="place-form">
+    <form class="popup__form" method="post" name="place-form" novalidate>
       <h2 class="popup__title">Новое место</h2>
-      <input class="popup__form-field popup__form-field_type_title" type="text" name="title" placeholder="Название">
-      <input class="popup__form-field popup__form-field_type_image" type="text" name="image" placeholder="Ссылка на картинку">
+      <label class="popup__label">
+        <input class="popup__form-field popup__form-field_type_title" type="text" name="title" placeholder="Название" id="title-field" minlength="2" maxlength="30" required>
+        <span class="popup__form-error title-field-error"></span>
+      </label>
+      <label class="popup__label">
+        <input class="popup__form-field popup__form-field_type_image" type="url" name="image" placeholder="Ссылка на картинку" id="link-field" required>
+        <span class="popup__form-error link-field-error"></span>
+      </label>
       <button class="btn btn_type_submit popup__btn" type="submit">Создать</button>
       <button class="btn btn_type_close popup__close-btn" type="button"></button>
     </form>
@@ -66,5 +78,6 @@
     </li>
   </template>
   <script src="./js/script.js"></script>
+  <script src="./js/validate.js"></script>
 </body>
 </html>
