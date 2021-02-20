@@ -41,16 +41,38 @@ const placeTemplate = document.querySelector('#place-template').content;
 const fullPlace = document.querySelector('#zoom-popup');
 const fullImage = fullPlace.querySelector('.full-place__image');
 const fullName = fullPlace.querySelector('.full-place__name');
+const formSettings = {
+  inputSelector: '.popup__form-field',
+  errorSelector: '.popup__form-error',
+  inputErrorClass: 'popup__form-field_type_error',
+  errorActiveClass: 'popup__form-error_active'
+};
 
-function resetAllErrorFields(popup) {
-  const errorElements = Array.from(popup.querySelectorAll('.popup__form-error'));
-  const inputElements = Array.from(popup.querySelectorAll('.popup__form-field'));
+function resetAllErrorFields(popup, settings) {
+  const errorElements = Array.from(popup.querySelectorAll(settings.errorSelector));
+  const inputElements = Array.from(popup.querySelectorAll(settings.inputSelector));
   inputElements.forEach(element => {
-    element.classList.remove('popup__form-field_type_error');
+    element.classList.remove(settings.inputErrorClass);
   });
   errorElements.forEach(element => {
-    element.classList.remove('popup__form-error_active');
+    element.classList.remove(settings.errorActiveClass);
   });
+}
+
+function handleProfileForm() {
+  const profileSafeButton = profilePopup.querySelector('.btn_type_submit');
+  if(profileSafeButton.classList.contains('btn_disabled')) {
+    profileSafeButton.classList.remove('btn_disabled');
+  }
+  resetAllErrorFields(profilePopup, formSettings);
+}
+
+function resetAllPopupInputs(popup, inputClass) {
+  const inputList = Array.from(popup.querySelectorAll(inputClass));
+  inputList.forEach(input => {
+    input.value = '';
+  });
+  resetAllErrorFields(popup, formSettings);
 }
 
 function openPopup(popup) {
@@ -58,7 +80,6 @@ function openPopup(popup) {
 }
 
 function closePopup(popup) {
-  resetAllErrorFields(popup);
   popup.classList.remove('popup_opened');
   popup.removeEventListener('mousedown', closePopupHandle);
   window.removeEventListener('keydown', closePopupOnEscape);
@@ -83,14 +104,10 @@ function handlePopup(popup) {
   window.addEventListener('keydown', closePopupOnEscape);
 }
 
-function setDefaultPlaceholder() {
-  const profileSafeButton = profilePopup.querySelector('.btn_type_submit');
-  if(profileSafeButton.classList.contains('btn_disabled')) {
-    profileSafeButton.classList.remove('btn_disabled');
-  }
+function setDefaultProfilePlaceholder() {
   nameInput.value = userName.textContent;
   jobInput.value = userJob.textContent;
-  handlePopup(profilePopup);
+  handleProfileForm();
 }
 
 function changeUserInfo(evt) {
@@ -153,14 +170,14 @@ function setFocusForVisibilityPopup(field) {
 addInitialPlaces(initialCards);
 
 profileBtn.addEventListener('click', () => {
-  setDefaultPlaceholder();
+  setDefaultProfilePlaceholder();
+  handlePopup(profilePopup);
   setFocusForVisibilityPopup(nameInput);
 });
 
 placeAddBtn.addEventListener('click', () => {
+  resetAllPopupInputs(placePopup, formSettings.inputSelector);
   handlePopup(placePopup);
-  titleInput.value = '';
-  imageInput.value = '';
   setFocusForVisibilityPopup(titleInput);
 });
 
