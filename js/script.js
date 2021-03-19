@@ -1,32 +1,6 @@
 import { Card } from './card.js';
 import { FormValidator } from './formvalidator.js';
-
-const initialCards = [
-  {
-    name: 'Архыз',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg'
-  },
-  {
-    name: 'Челябинская область',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg'
-  },
-  {
-    name: 'Иваново',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg'
-  },
-  {
-    name: 'Камчатка',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg'
-  },
-  {
-    name: 'Холмогорский район',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg'
-  },
-  {
-    name: 'Байкал',
-    link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg'
-  }
-];
+import { initialCards } from './initial-card.js';
 
 const formSettings = {
   formSelector: '.popup__form',
@@ -51,7 +25,6 @@ const placeForm = placePopup.querySelector('.popup__form');
 const titleInput = placePopup.querySelector('.popup__form-field_type_title');
 const imageInput = placePopup.querySelector('.popup__form-field_type_image');
 const placesContainer = document.querySelector('.places');
-const placeTemplate = document.querySelector('#place-template').content;
 const fullPlace = document.querySelector('#zoom-popup');
 const fullImage = fullPlace.querySelector('.full-place__image');
 const fullName = fullPlace.querySelector('.full-place__name');
@@ -59,8 +32,8 @@ const fullName = fullPlace.querySelector('.full-place__name');
 const validatedPlaceForm = new FormValidator(formSettings, placeForm);
 const validatedProfileForm = new FormValidator(formSettings, profileForm)
 
-function addNewPlace(cardName, cardLink) {
-  const place = new Card('#place-template', cardName, cardLink);
+function addNewPlace(data) {
+  const place = new Card('#place-template', data, openPicture);
   const newPlace = place.generateCard();
 
   placesContainer.prepend(newPlace);
@@ -68,7 +41,7 @@ function addNewPlace(cardName, cardLink) {
 
 function addInitialPlaces(placesArray) {
   placesArray.forEach(card => {
-    addNewPlace(card.name, card.link);
+    addNewPlace(card);
   });
 }
 
@@ -78,11 +51,20 @@ function openPopup(popup) {
 
 function closePopup(popup) {
   popup.classList.remove('popup_opened');
+  popup.removeEventListener('mousedown', closePopupHandle);
+  window.removeEventListener('keydown', closePopupOnEscape);
 }
 
-function closePopupOnEscape(evt, popup) {
+function openPicture(name, link) {
+  fullImage.src = link;
+  fullName.textContent = name;
+  handlePopup(fullPlace)
+}
+
+function closePopupOnEscape(evt) {
+  const openedPopup = document.querySelector('.popup_opened');
   if(evt.key === 'Escape') {
-    closePopup(popup);
+    closePopup(openedPopup);
   }
 }
 
@@ -92,11 +74,10 @@ function closePopupHandle(evt) {
   }
 }
 
-function addCloseEventListeners(popup) {
+function handlePopup(popup) {
+  openPopup(popup);
   popup.addEventListener('mousedown', closePopupHandle);
-  window.addEventListener('keydown', (evt) => {
-    closePopupOnEscape(evt, popup);
-  });
+  window.addEventListener('keydown', closePopupOnEscape);
 }
 
 function setDefaultProfilePlaceholder() {
@@ -121,27 +102,26 @@ addInitialPlaces(initialCards);
 validatedPlaceForm.enableValidation();
 validatedProfileForm.enableValidation();
 
-document.querySelectorAll('.popup').forEach(popup => {
-  addCloseEventListeners(popup);
-});
-
 profileBtn.addEventListener('click', () => {
   setDefaultProfilePlaceholder();
   validatedProfileForm.clearErrors();
-  openPopup(profilePopup);
+  handlePopup(profilePopup);
   setFocusForVisibilityPopup(nameInput);
 });
 
 placeAddBtn.addEventListener('click', () => {
   validatedPlaceForm.clearInputs();
   validatedPlaceForm.clearErrors();
-  openPopup(placePopup);
+  handlePopup(placePopup);
   setFocusForVisibilityPopup(titleInput);
 });
 
 profileForm.addEventListener('submit', changeUserInfo);
 
 placeForm.addEventListener('submit', () => {
-  addNewPlace(titleInput.value, imageInput.value);
+  addNewPlace({
+    name: titleInput.value,
+    link: imageInput.value
+  });
   closePopup(placePopup);
 });

@@ -1,8 +1,9 @@
 export class Card {
-  constructor(cardSelector, name, link) {
+  constructor(cardSelector, data, handleOpenPopup) {
     this._cardSelector = cardSelector;
-    this._name = name;
-    this._link = link;
+    this._name = data.name;
+    this._link = data.link;
+    this._handleOpenPopup = handleOpenPopup;
   }
 
   _getTemplate() {
@@ -16,25 +17,29 @@ export class Card {
   }
 
   _setEventListeners() {
-    this._element.querySelector('.place__like').addEventListener('click', () => {
+    this._likeButton.addEventListener('click', () => {
       this._handleLike();
     })
 
-    this._element.querySelector('.place__image').addEventListener('click', () => {
-      this._handleOpenPopup();
+    this._imageElement.addEventListener('click', () => {
+      this._handleOpenPopup(this._name, this._link);
     })
 
-    this._element.querySelector('.place__delete').addEventListener('click', () => {
+    this._deleteButton.addEventListener('click', () => {
       this._handleDelete();
     })
   }
 
   generateCard() {
     this._element = this._getTemplate();
+    this._titleElement = this._element.querySelector('.place__name');
+    this._imageElement =this._element.querySelector('.place__image');
+    this._likeButton = this._element.querySelector('.place__like');
+    this._deleteButton = this._element.querySelector('.place__delete');
     this._setEventListeners();
 
-    this._element.querySelector('.place__image').src = this._link;
-    this._element.querySelector('.place__name').textContent = this._name;
+    this._imageElement.src = this._link;
+    this._titleElement.textContent = this._name;
 
     return this._element;
   }
@@ -45,11 +50,6 @@ export class Card {
 
   _handleDelete() {
     this._element.remove();
-  }
-
-  _handleOpenPopup() {
-    fullImage.src = this._link;
-    fullName.textContent = this._name;
-    fullPlace.classList.add('popup_opened');
+    this._element = null;
   }
 }

@@ -78,8 +78,6 @@ export class FormValidator {
   }
 
   clearInputs() {
-    this._inputList.forEach(input => {
-      input.value = '';
-    });
+    this._formElement.reset();
   }
 }
