@@ -24,6 +24,7 @@ const initialCards = [
     link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg'
   }
 ];
+
 const profileBtn = document.querySelector('.profile__edit-btn');
 const profilePopup = document.querySelector('#profile-popup');
 const formElement = profilePopup.querySelector('.popup__form');
@@ -47,6 +48,27 @@ const formSettings = {
   inputErrorClass: 'popup__form-field_type_error',
   errorActiveClass: 'popup__form-error_active'
 };
+
+function addNewPlace(cardName, cardLink) {
+  const place = new Card('#place-template', cardName, cardLink);
+  const newPlace = place.generateCard();
+
+  placesContainer.prepend(newPlace);
+}
+
+function addInitialPlaces(placesArray) {
+  placesArray.forEach(card => {
+    addNewPlace(card.name, card.link);
+  });
+}
+
+placeForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  addNewPlace(titleInput.value, imageInput.value);
+  closePopup(placePopup);
+});
+
+addInitialPlaces(initialCards);
 
 function resetAllErrorFields(popup, settings) {
   const errorElements = Array.from(popup.querySelectorAll(settings.errorSelector));
@@ -81,14 +103,11 @@ function openPopup(popup) {
 
 function closePopup(popup) {
   popup.classList.remove('popup_opened');
-  popup.removeEventListener('mousedown', closePopupHandle);
-  window.removeEventListener('keydown', closePopupOnEscape);
 }
 
-function closePopupOnEscape(evt) {
-  const openedPopup = document.querySelector('.popup_opened');
+function closePopupOnEscape(evt, popup) {
   if(evt.key === 'Escape') {
-    closePopup(openedPopup);
+    closePopup(popup);
   }
 }
 
@@ -98,10 +117,20 @@ function closePopupHandle(evt) {
   }
 }
 
+function addCloseEventListeners(popup) {
+  popup.addEventListener('mousedown', closePopupHandle);
+  window.addEventListener('keydown', (evt) => {
+    closePopupOnEscape(evt, popup);
+  });
+}
+
+document.querySelectorAll('.popup').forEach(popup => {
+  addCloseEventListeners(popup);
+});
+
 function handlePopup(popup) {
   openPopup(popup);
-  popup.addEventListener('mousedown', closePopupHandle);
-  window.addEventListener('keydown', closePopupOnEscape);
+  addCloseEventListeners(popup);
 }
 
 function setDefaultProfilePlaceholder() {
@@ -117,57 +146,11 @@ function changeUserInfo(evt) {
   closePopup(profilePopup);
 }
 
-function changePlace(placeTitle, placeLink, newPlace, newLink) {
-  placeTitle.textContent = newPlace;
-  placeLink.alt = newPlace;
-  placeLink.src = newLink;
-}
-
-function createPlace(title, link) {
-  const placeCard = placeTemplate.querySelector('.place').cloneNode(true);
-  const placeLikeBtn = placeCard.querySelector('.place__like');
-  const placeDeleteBtn = placeCard.querySelector('.place__delete');
-  const placeName = placeCard.querySelector('.place__name');
-  const placeImage = placeCard.querySelector('.place__image');
-
-  changePlace(placeName, placeImage, title, link);
-
-  placeLikeBtn.addEventListener('click', function() {
-    placeLikeBtn.classList.toggle('place__like_type_active');
-  });
-
-  placeDeleteBtn.addEventListener('click', function(){
-    placeDeleteBtn.closest('.place').remove();
-  });
-
-  placeImage.addEventListener('click', function(){
-    changePlace(fullName, fullImage, title, link);
-    handlePopup(fullPlace);
-  });
-  return placeCard;
-}
-
-function addCard(title, link) {
-  placesContainer.prepend(createPlace(title, link));
-}
-
-function addNewPlace(evt) {
-  evt.preventDefault();
-  addCard(titleInput.value, imageInput.value);
-  closePopup(placePopup);
-}
-
-function addInitialPlaces(placesArray) {
-  placesArray.forEach(card => addCard(card.name, card.link));
-}
-
 function setFocusForVisibilityPopup(field) {
   setTimeout(function(){
     field.focus();
   }, 100);
 }
-
-addInitialPlaces(initialCards);
 
 profileBtn.addEventListener('click', () => {
   setDefaultProfilePlaceholder();
@@ -182,5 +165,3 @@ placeAddBtn.addEventListener('click', () => {
 });
 
 formElement.addEventListener('submit', changeUserInfo);
-
-placeForm.addEventListener('submit', addNewPlace);
