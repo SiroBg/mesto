@@ -1,3 +1,6 @@
+import { Card } from './card.js';
+import { FormValidator } from './formvalidator.js';
+
 const initialCards = [
   {
     name: 'Архыз',
@@ -25,11 +28,21 @@ const initialCards = [
   }
 ];
 
+const formSettings = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__form-field',
+  submitButtonSelector: '.btn_type_submit',
+  inactiveButtonClass: 'btn_disabled',
+  inputErrorClass: 'popup__form-field_type_error',
+  errorSelector: '.popup__form-error',
+  errorClass: 'popup__form-error_active'
+}
+
 const profileBtn = document.querySelector('.profile__edit-btn');
 const profilePopup = document.querySelector('#profile-popup');
-const formElement = profilePopup.querySelector('.popup__form');
-const nameInput = formElement.querySelector('.popup__form-field_type_name');
-const jobInput = formElement.querySelector('.popup__form-field_type_job');
+const profileForm = profilePopup.querySelector('.popup__form');
+const nameInput = profileForm.querySelector('.popup__form-field_type_name');
+const jobInput = profileForm.querySelector('.popup__form-field_type_job');
 const userName = document.querySelector('.profile__name');
 const userJob = document.querySelector('.profile__job');
 const placeAddBtn = document.querySelector('.profile__add-btn');
@@ -42,12 +55,9 @@ const placeTemplate = document.querySelector('#place-template').content;
 const fullPlace = document.querySelector('#zoom-popup');
 const fullImage = fullPlace.querySelector('.full-place__image');
 const fullName = fullPlace.querySelector('.full-place__name');
-const formSettings = {
-  inputSelector: '.popup__form-field',
-  errorSelector: '.popup__form-error',
-  inputErrorClass: 'popup__form-field_type_error',
-  errorActiveClass: 'popup__form-error_active'
-};
+
+const validatedPlaceForm = new FormValidator(formSettings, placeForm);
+const validatedProfileForm = new FormValidator(formSettings, profileForm)
 
 function addNewPlace(cardName, cardLink) {
   const place = new Card('#place-template', cardName, cardLink);
@@ -60,41 +70,6 @@ function addInitialPlaces(placesArray) {
   placesArray.forEach(card => {
     addNewPlace(card.name, card.link);
   });
-}
-
-placeForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  addNewPlace(titleInput.value, imageInput.value);
-  closePopup(placePopup);
-});
-
-addInitialPlaces(initialCards);
-
-function resetAllErrorFields(popup, settings) {
-  const errorElements = Array.from(popup.querySelectorAll(settings.errorSelector));
-  const inputElements = Array.from(popup.querySelectorAll(settings.inputSelector));
-  inputElements.forEach(element => {
-    element.classList.remove(settings.inputErrorClass);
-  });
-  errorElements.forEach(element => {
-    element.classList.remove(settings.errorActiveClass);
-  });
-}
-
-function handleProfileForm() {
-  const profileSafeButton = profilePopup.querySelector('.btn_type_submit');
-  if(profileSafeButton.classList.contains('btn_disabled')) {
-    profileSafeButton.classList.remove('btn_disabled');
-  }
-  resetAllErrorFields(profilePopup, formSettings);
-}
-
-function resetAllPopupInputs(popup, inputClass) {
-  const inputList = Array.from(popup.querySelectorAll(inputClass));
-  inputList.forEach(input => {
-    input.value = '';
-  });
-  resetAllErrorFields(popup, formSettings);
 }
 
 function openPopup(popup) {
@@ -124,23 +99,12 @@ function addCloseEventListeners(popup) {
   });
 }
 
-document.querySelectorAll('.popup').forEach(popup => {
-  addCloseEventListeners(popup);
-});
-
-function handlePopup(popup) {
-  openPopup(popup);
-  addCloseEventListeners(popup);
-}
-
 function setDefaultProfilePlaceholder() {
   nameInput.value = userName.textContent;
   jobInput.value = userJob.textContent;
-  handleProfileForm();
 }
 
-function changeUserInfo(evt) {
-  evt.preventDefault();
+function changeUserInfo() {
   userName.textContent = nameInput.value;
   userJob.textContent = jobInput.value;
   closePopup(profilePopup);
@@ -152,16 +116,32 @@ function setFocusForVisibilityPopup(field) {
   }, 100);
 }
 
+addInitialPlaces(initialCards);
+
+validatedPlaceForm.enableValidation();
+validatedProfileForm.enableValidation();
+
+document.querySelectorAll('.popup').forEach(popup => {
+  addCloseEventListeners(popup);
+});
+
 profileBtn.addEventListener('click', () => {
   setDefaultProfilePlaceholder();
-  handlePopup(profilePopup);
+  validatedProfileForm.clearErrors();
+  openPopup(profilePopup);
   setFocusForVisibilityPopup(nameInput);
 });
 
 placeAddBtn.addEventListener('click', () => {
-  resetAllPopupInputs(placePopup, formSettings.inputSelector);
-  handlePopup(placePopup);
+  validatedPlaceForm.clearInputs();
+  validatedPlaceForm.clearErrors();
+  openPopup(placePopup);
   setFocusForVisibilityPopup(titleInput);
 });
 
-formElement.addEventListener('submit', changeUserInfo);
+profileForm.addEventListener('submit', changeUserInfo);
+
+placeForm.addEventListener('submit', () => {
+  addNewPlace(titleInput.value, imageInput.value);
+  closePopup(placePopup);
+});
