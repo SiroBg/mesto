@@ -47,6 +47,8 @@ function addInitialPlaces(placesArray) {
 
 function openPopup(popup) {
   popup.classList.add('popup_opened');
+  popup.addEventListener('mousedown', closePopupHandle);
+  window.addEventListener('keydown', closePopupOnEscape);
 }
 
 function closePopup(popup) {
@@ -58,12 +60,12 @@ function closePopup(popup) {
 function openPicture(name, link) {
   fullImage.src = link;
   fullName.textContent = name;
-  handlePopup(fullPlace)
+  openPopup(fullPlace)
 }
 
 function closePopupOnEscape(evt) {
-  const openedPopup = document.querySelector('.popup_opened');
   if(evt.key === 'Escape') {
+    const openedPopup = document.querySelector('.popup_opened');
     closePopup(openedPopup);
   }
 }
@@ -72,12 +74,6 @@ function closePopupHandle(evt) {
   if(evt.target.classList.contains('btn_type_close') || evt.target === evt.currentTarget) {
     closePopup(evt.currentTarget);
   }
-}
-
-function handlePopup(popup) {
-  openPopup(popup);
-  popup.addEventListener('mousedown', closePopupHandle);
-  window.addEventListener('keydown', closePopupOnEscape);
 }
 
 function setDefaultProfilePlaceholder() {
@@ -105,14 +101,14 @@ validatedProfileForm.enableValidation();
 profileBtn.addEventListener('click', () => {
   setDefaultProfilePlaceholder();
   validatedProfileForm.clearErrors();
-  handlePopup(profilePopup);
+  openPopup(profilePopup);
   setFocusForVisibilityPopup(nameInput);
 });
 
 placeAddBtn.addEventListener('click', () => {
   validatedPlaceForm.clearInputs();
   validatedPlaceForm.clearErrors();
-  handlePopup(placePopup);
+  openPopup(placePopup);
   setFocusForVisibilityPopup(titleInput);
 });
 
