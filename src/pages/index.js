@@ -1,4 +1,4 @@
-import '../../pages/index.css';
+import './index.css';
 import PopupWithImage from '../components/PopupWithImage.js';
 import PopupWithForm from '../components/PopupWithForm.js';
 import Card from '../components/Card.js';
@@ -21,22 +21,21 @@ const profilePopup = new PopupWithForm('#profile-popup', (inputValues) => {
 
 profilePopup.setEventListeners();
 
-const placePopup = new PopupWithForm('#place-popup', (inputValues) => {
-  const card = new Card('#place-template', { name: inputValues.title, link: inputValues.image }, fullPlacePopup.open.bind(fullPlacePopup));
+function addNewCard(item) {
+  const card = new Card('#place-template', item, fullPlacePopup.open.bind(fullPlacePopup));
   const newCard = card.generateCard();
 
   placesContainer.setItem(newCard);
-});
+}
+
+const placePopup = new PopupWithForm('#place-popup', (item) => addNewCard({ name: item.title, link: item.image }));
 
 placePopup.setEventListeners();
 
 const placesContainer = new Section({
   items: initialCards,
   renderer: (item) => {
-    const place = new Card('#place-template', item, fullPlacePopup.open.bind(fullPlacePopup));
-    const newPlace = place.generateCard();
-
-    placesContainer.setItem(newPlace);
+    addNewCard(item);
   }
 }, '.places');
 
