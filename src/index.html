@@ -4,18 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mesto</title>
-  <link rel="stylesheet" href="pages/index.css">
 </head>
 <body class="root">
   <header class="root__section header">
     <a class="header__link" href="#" target="_self">
-      <img class="logo" src="./images/mesto-logo.svg" alt="Логотип 'Место Россия'">
+      <img class="logo" src="<%=require('./images/mesto-logo.svg')%>" alt="Логотип 'Место Россия'">
     </a>
   </header>
 
   <main class="root__section content">
     <header class="profile content__profile">
-      <img class="profile__image" src="./images/kusto.jpg" alt="Фотография пользователя">
+      <img class="profile__image" src="<%=require('./images/kusto.jpg')%>" alt="Фотография пользователя">
       <div class="profile__info">
         <h1 class="profile__name">Жак-Ив Кусто</h1>
         <button class="btn btn_type_edit profile__edit-btn" type="button"></button>
@@ -77,6 +76,5 @@
       <button class="btn btn_type_delete place__delete" type="button"></button>
     </li>
   </template>
-  <script type="module" src="./js/script.js"></script>
 </body>
 </html>

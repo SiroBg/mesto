@@ -1,4 +1,4 @@
-export class FormValidator {
+export default class FormValidator {
   constructor(formSettings, formElement) {
     this._formSelector = formSettings.formSelector;
     this._submitButtonSelector = formSettings.submitButtonSelector;
@@ -75,9 +75,5 @@ export class FormValidator {
   clearErrors() {
     this._resetAllErrorFields();
     this._toggleSubmitButtonState();
-  }
-
-  clearInputs() {
-    this._formElement.reset();
   }
 }
