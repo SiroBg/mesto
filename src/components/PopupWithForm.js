@@ -17,7 +17,9 @@ export default class PopupWithForm extends Popup {
   }
 
   _setFocusOnFirstInput() {
-    this._formInputs[0].focus();
+    setTimeout(() => {
+      this._formInputs[0].focus();
+    }, 300)
   }
 
   setEventListeners() {
