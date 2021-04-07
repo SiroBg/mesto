@@ -1,13 +1,13 @@
 import './index.css';
 import PopupWithImage from '../components/PopupWithImage.js';
 import PopupWithForm from '../components/PopupWithForm.js';
-import PopupDeleteConfirm from '../components/PopupDeleteConfirm.js';
+import PopupWithDeleteConfirm from '../components/PopupWithDeleteConfirm.js';
 import Card from '../components/Card.js';
 import Section from '../components/Section.js';
 import FormValidator from '../components/FormValidator.js';
 import UserInfo from '../components/UserInfo.js';
 import { formSettings } from '../utils/form-settings.js';
-import { profileBtn, placeAddBtn } from '../utils/constatnts.js';
+import { profileBtn, placeAddBtn, userId } from '../utils/constatnts.js';
 import Api from '../components/Api.js';
 
 const api = new Api({
@@ -45,16 +45,31 @@ const profilePopup = new PopupWithForm('#profile-popup', (inputValues) => {
 
 profilePopup.setEventListeners();
 
-const deletePopup = new PopupDeleteConfirm('#delete-popup', deleteConfirm => deleteConfirm);
-
-deletePopup.setEventListeners();
-
 function addNewCard(item) {
-  const card = new Card('#place-template', item, fullPlacePopup.open.bind(fullPlacePopup), deletePopup);
+  const card = new Card('#place-template', item, fullPlacePopup.open.bind(fullPlacePopup), confirmationPopup, userId);
   const newCard = card.generateCard();
 
   placesContainer.setItem(newCard);
 }
+
+const placesContainer = new Section(item => {
+    addNewCard(item);
+  }, '.places');
+
+api.getInitialCards()
+  .then(res => {
+    placesContainer.renderItems(res);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+const confirmationPopup = new PopupWithDeleteConfirm('#delete-popup', (cardId, card) => {
+  api.deleteCard(cardId);
+  confirmationPopup.removeCard(card);
+});
+
+confirmationPopup.setEventListeners();
 
 const placePopup = new PopupWithForm('#place-popup', (item) =>
   api.postNewCard({ name: item.title, link: item.image })
@@ -65,15 +80,6 @@ const placePopup = new PopupWithForm('#place-popup', (item) =>
 );
 
 placePopup.setEventListeners();
-
-const placesContainer = new Section({
-  items: api.getInitialCards(),
-  renderer: (item) => {
-    addNewCard(item);
-  }
-}, '.places');
-
-placesContainer.renderItems();
 
 const validatedPlaceForm = new FormValidator(formSettings, placePopup._formElement);
 const validatedProfileForm = new FormValidator(formSettings, profilePopup._formElement)
