@@ -1,8 +1,10 @@
 export default class Card {
-  constructor(cardSelector, data, handleOpenPopup) {
+  constructor(cardSelector, data, handleOpenPopup, deletePopup) {
     this._cardSelector = cardSelector;
     this._name = data.name;
     this._link = data.link;
+    this._likeCount = data.likes;
+    this._deletePopup = deletePopup;
     this._handleOpenPopup = handleOpenPopup;
   }
 
@@ -26,7 +28,7 @@ export default class Card {
     })
 
     this._deleteButton.addEventListener('click', () => {
-      this._handleDelete();
+      this._deletePopup.open();
     })
   }
 
@@ -35,11 +37,13 @@ export default class Card {
     this._titleElement = this._element.querySelector('.place__name');
     this._imageElement =this._element.querySelector('.place__image');
     this._likeButton = this._element.querySelector('.place__like');
+    this._likeCountContainer = this._element.querySelector('.place__like-counter');
     this._deleteButton = this._element.querySelector('.place__delete');
     this._setEventListeners();
 
     this._imageElement.src = this._link;
     this._titleElement.textContent = this._name;
+    this._likeCountContainer.textContent = this._likeCount.length;
 
     return this._element;
   }

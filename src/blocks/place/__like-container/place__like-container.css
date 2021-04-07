@@ -1,0 +1,6 @@
+.place__like-container {
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
