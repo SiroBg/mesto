@@ -45,11 +45,18 @@ const profilePopup = new PopupWithForm('#profile-popup', (inputValues) => {
 
 profilePopup.setEventListeners();
 
+function handleCardLikes(cardId, isLiked) {
+  if(!isLiked) {
+    api.likeCard(cardId);
+  } else api.dislikeCard(cardId);
+}
+
 function addNewCard(item) {
   const card = new Card('#place-template',
     item,
     fullPlacePopup.open.bind(fullPlacePopup),
     confirmationPopup.handleConfirm.bind(confirmationPopup),
+    handleCardLikes,
     userId);
   const newCard = card.generateCard();
 

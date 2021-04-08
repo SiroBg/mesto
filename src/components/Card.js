@@ -1,11 +1,12 @@
 export default class Card {
-  constructor(cardSelector, data, handleOpenPopup, handleConfirmPopup, userId) {
+  constructor(cardSelector, data, handleOpenPopup, handleConfirmPopup, handleCardLikes, userId) {
     this._cardSelector = cardSelector;
     this._name = data.name;
     this._link = data.link;
     this._likeCount = data.likes;
     this._handleConfirmPopup = handleConfirmPopup;
     this._handleOpenPopup = handleOpenPopup;
+    this._handleCardLikes = handleCardLikes;
     this._userId = userId;
     this._cardOwnerId = data.owner._id;
     this._cardId = data._id;
@@ -49,6 +50,9 @@ export default class Card {
     this._titleElement = this._element.querySelector('.place__name');
     this._imageElement =this._element.querySelector('.place__image');
     this._likeButton = this._element.querySelector('.place__like');
+    if(this._isLiked()) {
+      this._likeButton.classList.add('place__like_type_active');
+    }
     this._likeCountContainer = this._element.querySelector('.place__like-counter');
     this._deleteButton = this._element.querySelector('.place__delete');
     if(!this._checkOwner()) {
@@ -64,7 +68,12 @@ export default class Card {
     return this._element;
   }
 
+  _isLiked() {
+    return this._likeCount.some(likeObj => likeObj._id === this._userId);
+  }
+
   _handleLike() {
     this._element.querySelector('.place__like').classList.toggle('place__like_type_active');
+    this._handleCardLikes(this._cardId, this._isLiked());
   }
 }
