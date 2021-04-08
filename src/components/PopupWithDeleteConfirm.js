@@ -12,7 +12,7 @@ export default class PopupWithDeleteConfirm extends Popup {
     this._confirmButton.addEventListener('click', () => this._handleCardDelete(this._cardId, this._element));
   }
 
-  open(cardId, element) {
+  handleConfirm(cardId, element) {
     this._element = element;
     this._cardId = cardId;
     super.open();

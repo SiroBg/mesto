@@ -46,7 +46,11 @@ const profilePopup = new PopupWithForm('#profile-popup', (inputValues) => {
 profilePopup.setEventListeners();
 
 function addNewCard(item) {
-  const card = new Card('#place-template', item, fullPlacePopup.open.bind(fullPlacePopup), confirmationPopup, userId);
+  const card = new Card('#place-template',
+    item,
+    fullPlacePopup.open.bind(fullPlacePopup),
+    confirmationPopup.handleConfirm.bind(confirmationPopup),
+    userId);
   const newCard = card.generateCard();
 
   placesContainer.setItem(newCard);
