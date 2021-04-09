@@ -45,10 +45,18 @@ const profilePopup = new PopupWithForm('#profile-popup', (inputValues) => {
 
 profilePopup.setEventListeners();
 
-function handleCardLikes(cardId, isLiked) {
+function handleCardLikes(cardInfo, isLiked, renderLikes) {
   if(!isLiked) {
-    api.likeCard(cardId);
-  } else api.dislikeCard(cardId);
+    api.likeCard(cardInfo._id)
+      .then(res => {
+        renderLikes(res.likes.length);
+      });
+  } else {
+    api.dislikeCard(cardInfo._id)
+      .then(res => {
+        renderLikes(res.likes.length);
+      });
+  }
 }
 
 function addNewCard(item) {
