@@ -7,7 +7,7 @@ import Section from '../components/Section.js';
 import FormValidator from '../components/FormValidator.js';
 import UserInfo from '../components/UserInfo.js';
 import { formSettings } from '../utils/form-settings.js';
-import { profileBtn, placeAddBtn, userId, avatarImage } from '../utils/constatnts.js';
+import { profileBtn, placeAddBtn, avatarImage } from '../utils/constatnts.js';
 import Api from '../components/Api.js';
 import renderLoading from '../utils/render-loading.js';
 
@@ -25,14 +25,21 @@ fullPlacePopup.setEventListeners();
 
 const userInfo = new UserInfo('.profile__name', '.profile__job', '.profile__image');
 
-api.getServerUserInfo()
-  .then(data => {
-    userInfo.setUserInfo(data);
-    userInfo.setNewAvatar(data.avatar);
+const placesContainer = new Section((item, userId) => {
+  addNewCard(item, userId);
+}, '.places');
+
+Promise.all([
+  api.getServerUserInfo(),
+  api.getInitialCards()
+])
+  .then(res => {
+    const [userData, initialCards] = res;
+    userInfo.setUserInfo(userData);
+    userInfo.setNewAvatar(userData.avatar);
+    placesContainer.renderItems(initialCards, userData._id);
   })
-  .catch(err => {
-    console.log(err);
-  });
+  .catch(err => console.log(err));
 
 const avatarPopup = new PopupWithForm('#avatar-popup', inputValues => {
   renderLoading(true, avatarPopup._submitBtn);
@@ -78,7 +85,7 @@ function handleCardLikes(cardInfo, isLiked, renderLikes, putLike, removeLike) {
   }
 }
 
-function addNewCard(item) {
+function addNewCard(item, userId) {
   const card = new Card('#place-template',
     item,
     fullPlacePopup.open.bind(fullPlacePopup),
@@ -90,22 +97,12 @@ function addNewCard(item) {
   placesContainer.setItem(newCard);
 }
 
-const placesContainer = new Section(item => {
-    addNewCard(item);
-  }, '.places');
-
-api.getInitialCards()
-  .then(res => {
-    placesContainer.renderItems(res);
-  })
-  .catch(err => {
-    console.log(err);
-  });
-
 const confirmationPopup = new PopupWithDeleteConfirm('#delete-popup', (cardId, card) => {
   api.deleteCard(cardId)
+    .then(() => {
+      confirmationPopup.removeCard(card);
+    })
     .catch(err => console.log(err));
-  confirmationPopup.removeCard(card);
 });
 
 confirmationPopup.setEventListeners();
@@ -114,7 +111,7 @@ const placePopup = new PopupWithForm('#place-popup', item => {
   renderLoading(true, placePopup._submitBtn);
   api.postNewCard({ name: item.title, link: item.image })
     .then(res => {
-      addNewCard(res);
+      addNewCard(res, res.owner._id);
       placePopup.close();
     })
     .catch(err => console.log(err))
@@ -136,7 +133,6 @@ profileBtn.addEventListener('click', () => {
   profilePopup._formInputs.forEach(input => {
     input.value = userInfo.getUserInfo()[input.name];
   });
-  validatedProfileForm._toggleSubmitButtonState();
   profilePopup.open();
 });
 
