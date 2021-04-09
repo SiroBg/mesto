@@ -9,6 +9,7 @@ import UserInfo from '../components/UserInfo.js';
 import { formSettings } from '../utils/form-settings.js';
 import { profileBtn, placeAddBtn, userId, avatarImage } from '../utils/constatnts.js';
 import Api from '../components/Api.js';
+import renderLoading from '../utils/render-loading.js';
 
 const api = new Api({
   baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-22',
@@ -17,14 +18,6 @@ const api = new Api({
     'Content-Type': 'application/json'
   }
 });
-
-function renderLoading(isLoading, btnElement) {
-  if(isLoading) {
-    btnElement.classList.add('popup__btn_loading');
-  } else {
-    btnElement.classList.remove('popup__btn_loading');
-  }
-}
 
 const fullPlacePopup = new PopupWithImage('#zoom-popup');
 
@@ -46,6 +39,7 @@ const avatarPopup = new PopupWithForm('#avatar-popup', inputValues => {
   api.patchUserAvatar(inputValues.avatar)
     .then(res => {
       userInfo.setNewAvatar(res.avatar);
+      avatarPopup.close();
     })
     .catch(err => console.log(err))
     .finally(() => renderLoading(false, avatarPopup._submitBtn));
@@ -58,6 +52,7 @@ const profilePopup = new PopupWithForm('#profile-popup', inputValues => {
   api.setNewUserInfo(inputValues)
     .then(res => {
       userInfo.setUserInfo(res);
+      profilePopup.close();
     })
     .catch(err => console.log(err))
     .finally(() => renderLoading(false, profilePopup._submitBtn))
@@ -65,17 +60,19 @@ const profilePopup = new PopupWithForm('#profile-popup', inputValues => {
 
 profilePopup.setEventListeners();
 
-function handleCardLikes(cardInfo, isLiked, renderLikes) {
+function handleCardLikes(cardInfo, isLiked, renderLikes, putLike, removeLike) {
   if(!isLiked) {
     api.likeCard(cardInfo._id)
       .then(res => {
         renderLikes(res.likes.length);
+        putLike();
       })
       .catch(err => console.log(err));
   } else {
     api.dislikeCard(cardInfo._id)
       .then(res => {
         renderLikes(res.likes.length);
+        removeLike();
       })
       .catch(err => console.log(err));
   }
@@ -118,6 +115,7 @@ const placePopup = new PopupWithForm('#place-popup', item => {
   api.postNewCard({ name: item.title, link: item.image })
     .then(res => {
       addNewCard(res);
+      placePopup.close();
     })
     .catch(err => console.log(err))
     .finally(() => renderLoading(false, placePopup._submitBtn))

@@ -45,7 +45,7 @@ export default class Card {
     this._likeButton = this._element.querySelector('.place__like');
     this._likeState = this._isLiked();
     if(this._likeState) {
-      this._likeButton.classList.add('place__like_type_active');
+      this.likeCard();
     }
     this._likeCountContainer = this._element.querySelector('.place__like-counter');
     this._deleteButton = this._element.querySelector('.place__delete');
@@ -71,8 +71,19 @@ export default class Card {
   }
 
   _handleLike() {
-    this._element.querySelector('.place__like').classList.toggle('place__like_type_active');
-    this._handleCardLikes(this._cardInfo, this._likeState, this._renderLikes.bind(this));
+    this._handleCardLikes(this._cardInfo,
+      this._likeState,
+      this._renderLikes.bind(this),
+      this.likeCard.bind(this),
+      this.dislikeCard.bind(this));
     this._likeState = !this._likeState;
+  }
+
+  likeCard() {
+    this._likeButton.classList.add('place__like_type_active');
+  }
+
+  dislikeCard() {
+    this._likeButton.classList.remove('place__like_type_active');
   }
 }
