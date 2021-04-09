@@ -23,7 +23,7 @@ export default class Api {
       headers: this._headers,
       body: JSON.stringify({
         name: info.name,
-        about: info.job
+        about: info.about
       })
     })
       .then(res => {
@@ -88,6 +88,22 @@ export default class Api {
     return fetch(`${this._baseUrl + '/cards/likes/' + cardId}`, {
       method: 'DELETE',
       headers: this._headers
+    })
+      .then(res => {
+        if(res.ok) {
+          return res.json();
+        }
+        return Promise.reject(`Ошибка: ${res.status}`);
+      })
+  }
+
+  patchUserAvatar(avatarLink) {
+    return fetch(`${this._baseUrl + '/users/me/avatar'}`, {
+      method: 'PATCH',
+      headers: this._headers,
+      body: JSON.stringify({
+        avatar: avatarLink
+      })
     })
       .then(res => {
         if(res.ok) {

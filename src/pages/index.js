@@ -7,7 +7,7 @@ import Section from '../components/Section.js';
 import FormValidator from '../components/FormValidator.js';
 import UserInfo from '../components/UserInfo.js';
 import { formSettings } from '../utils/form-settings.js';
-import { profileBtn, placeAddBtn, userId } from '../utils/constatnts.js';
+import { profileBtn, placeAddBtn, userId, avatarImage } from '../utils/constatnts.js';
 import Api from '../components/Api.js';
 
 const api = new Api({
@@ -18,29 +18,49 @@ const api = new Api({
   }
 });
 
+function renderLoading(isLoading, btnElement) {
+  if(isLoading) {
+    btnElement.classList.add('popup__btn_loading');
+  } else {
+    btnElement.classList.remove('popup__btn_loading');
+  }
+}
+
 const fullPlacePopup = new PopupWithImage('#zoom-popup');
 
 fullPlacePopup.setEventListeners();
 
-const userInfo = new UserInfo('.profile__name', '.profile__job');
+const userInfo = new UserInfo('.profile__name', '.profile__job', '.profile__image');
 
 api.getServerUserInfo()
   .then(data => {
-    userInfo.setUserInfo({ name: data.name, job: data.about });
+    userInfo.setUserInfo(data);
+    userInfo.setNewAvatar(data.avatar);
   })
   .catch(err => {
     console.log(err);
   });
 
-const profilePopup = new PopupWithForm('#profile-popup', (inputValues) => {
+const avatarPopup = new PopupWithForm('#avatar-popup', inputValues => {
+  renderLoading(true, avatarPopup._submitBtn);
+  api.patchUserAvatar(inputValues.avatar)
+    .then(res => {
+      userInfo.setNewAvatar(res.avatar);
+    })
+    .catch(err => console.log(err))
+    .finally(() => renderLoading(false, avatarPopup._submitBtn));
+})
+
+avatarPopup.setEventListeners();
+
+const profilePopup = new PopupWithForm('#profile-popup', inputValues => {
+  renderLoading(true, profilePopup._submitBtn);
   api.setNewUserInfo(inputValues)
     .then(res => {
-      userInfo.setUserInfo({ name: res.name, job: res.about });
+      userInfo.setUserInfo(res);
     })
-    .catch(err => {
-      userInfo.setUserInfo(inputValues);
-      console.log(err);
-    })
+    .catch(err => console.log(err))
+    .finally(() => renderLoading(false, profilePopup._submitBtn))
 });
 
 profilePopup.setEventListeners();
@@ -50,12 +70,14 @@ function handleCardLikes(cardInfo, isLiked, renderLikes) {
     api.likeCard(cardInfo._id)
       .then(res => {
         renderLikes(res.likes.length);
-      });
+      })
+      .catch(err => console.log(err));
   } else {
     api.dislikeCard(cardInfo._id)
       .then(res => {
         renderLikes(res.likes.length);
-      });
+      })
+      .catch(err => console.log(err));
   }
 }
 
@@ -84,27 +106,32 @@ api.getInitialCards()
   });
 
 const confirmationPopup = new PopupWithDeleteConfirm('#delete-popup', (cardId, card) => {
-  api.deleteCard(cardId);
+  api.deleteCard(cardId)
+    .catch(err => console.log(err));
   confirmationPopup.removeCard(card);
 });
 
 confirmationPopup.setEventListeners();
 
-const placePopup = new PopupWithForm('#place-popup', (item) =>
+const placePopup = new PopupWithForm('#place-popup', item => {
+  renderLoading(true, placePopup._submitBtn);
   api.postNewCard({ name: item.title, link: item.image })
     .then(res => {
       addNewCard(res);
     })
     .catch(err => console.log(err))
-);
+    .finally(() => renderLoading(false, placePopup._submitBtn))
+});
 
 placePopup.setEventListeners();
 
 const validatedPlaceForm = new FormValidator(formSettings, placePopup._formElement);
-const validatedProfileForm = new FormValidator(formSettings, profilePopup._formElement)
+const validatedProfileForm = new FormValidator(formSettings, profilePopup._formElement);
+const validatedAvatarForm = new FormValidator(formSettings, avatarPopup._formElement);
 
 validatedPlaceForm.enableValidation();
 validatedProfileForm.enableValidation();
+validatedAvatarForm.enableValidation();
 
 profileBtn.addEventListener('click', () => {
   validatedProfileForm.clearErrors();
@@ -119,3 +146,8 @@ placeAddBtn.addEventListener('click', () => {
   validatedPlaceForm.clearErrors();
   placePopup.open();
 });
+
+avatarImage.addEventListener('click', () => {
+  validatedAvatarForm.clearErrors();
+  avatarPopup.open();
+})

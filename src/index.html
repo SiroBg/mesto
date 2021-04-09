@@ -14,7 +14,9 @@
 
   <main class="root__section content">
     <header class="profile content__profile">
-      <img class="profile__image" src="<%=require('./images/kusto.jpg')%>" alt="Фотография пользователя">
+      <div class="profile__image-container">
+        <img class="profile__image" src="<%=require('./images/kusto.jpg')%>" alt="Фотография пользователя">
+      </div>
       <div class="profile__info">
         <h1 class="profile__name"></h1>
         <button class="btn btn_type_edit profile__edit-btn" type="button"></button>
@@ -39,7 +41,7 @@
         <span class="popup__form-error name-field-error"></span>
       </label>
       <label class="popup__label">
-        <input class="popup__form-field popup__form-field_type_job" type="text" name="job" placeholder="Вид деятельности" id="job-field" minlength="2" maxlength="200" required>
+        <input class="popup__form-field popup__form-field_type_job" type="text" name="about" placeholder="Вид деятельности" id="job-field" minlength="2" maxlength="200" required>
         <span class="popup__form-error job-field-error"></span>
       </label>
       <button class="btn btn_type_submit popup__btn" type="submit">Сохранить</button>
@@ -74,6 +76,17 @@
       <button class="btn btn_type_submit popup__btn popup__btn_type_delete" type="button">Да</button>
       <button class="btn btn_type_close popup__close-btn" type="button"></button>
     </div>
+  </article>
+  <article class="popup" id="avatar-popup">
+    <form class="popup__form popup__form_type_avatar" method="post" name="avatar-form" novalidate>
+      <h2 class="popup__title">Обновить аватар</h2>
+      <label class="popup__label">
+        <input class="popup__form-field popup__form-field_type_image" type="url" name="avatar" placeholder="Ссылка на картинку" id="avatar-field" required>
+        <span class="popup__form-error avatar-field-error"></span>
+      </label>
+      <button class="btn btn_type_submit popup__btn" type="submit">Сохранить</button>
+      <button class="btn btn_type_close popup__close-btn" type="button"></button>
+    </form>
   </article>
   <template id="place-template">
     <li class="place">

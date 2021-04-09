@@ -1,0 +1,8 @@
+.popup__btn_loading {
+  font-size: 0;
+}
+
+.popup__btn_loading::after {
+  font-size: 18px;
+  content: 'Загрузка...';
+}
